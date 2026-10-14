@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VitaSphere AI</title>
+<style>
+:root { color-scheme: light dark; --bg: light-dark(#f4f7f6,#101715); --surface: light-dark(#ffffff,#19211e); --surface2: light-dark(#f0f5f2,#222d28); --text: light-dark(#172720,#eef5f0); --muted: light-dark(#718078,#a5b4ab); --line: light-dark(#e1e9e4,#303c35); --green: light-dark(#267a5a,#6ed5a5); --green-dark: light-dark(#18563f,#b4f0d0); --mint: light-dark(#e2f5eb,#213b2e); --coral: light-dark(#b9694c,#f0a487); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+#app { min-height: 100vh; width: 100%; background: var(--bg); }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+.shell { display: grid; grid-template-columns: 236px minmax(0,1fr); min-height: 100vh; }
+aside { border-right: 1px solid var(--line); padding: 26px 16px; background: var(--surface); display: flex; flex-direction: column; gap: 28px; }
+.brand { display:flex; align-items:center; gap:11px; padding: 0 8px; }
+.logo { width: 38px; height: 38px; display:grid; place-items:center; border-radius:13px; color:#fff; background:linear-gradient(145deg,#3ba878,#195e48); box-shadow:0 6px 18px #25865a2c; }
+.brand strong { display:block; letter-spacing:-.4px; font-size:16px; }
+.brand small { color:var(--muted); font-size:11px; letter-spacing:1.4px; text-transform:uppercase; }
+.nav-label { color:var(--muted); font-size:10px; font-weight:750; letter-spacing:1.5px; padding:0 12px; margin-bottom:8px; }
+nav { display:grid; gap:5px; }
+.nav-btn { display:flex; gap:12px; align-items:center; border:0; width:100%; text-align:left; color:var(--muted); background:transparent; padding:12px; border-radius:12px; }
+.nav-btn .ico { width:19px; text-align:center; font-size:17px; }
+.nav-btn.active { color:var(--green-dark); background:var(--mint); font-weight:700; }
+.side-note { margin-top:auto; padding:15px; border:1px solid var(--line); border-radius:15px; background:var(--surface2); }
+.side-note .pulse { width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px; }
+.side-note strong { font-size:12px; }
+.side-note p { color:var(--muted); font-size:12px; margin:8px 0 0; }
+main { min-width:0; padding:27px clamp(18px,4vw,48px) 38px; max-width:1500px; width:100%; margin:0 auto; }
+.topbar { display:flex; justify-content:space-between; gap:20px; align-items:center; margin-bottom:28px; }
+.eyebrow { color:var(--green); font-size:11px; letter-spacing:1.7px; text-transform:uppercase; font-weight:800; }
+h1 { font-size:clamp(26px,3vw,35px); line-height:1.12; margin:7px 0 8px; letter-spacing:-1.2px; }
+.subtitle { color:var(--muted); margin:0; font-size:14px; }
+.top-actions { display:flex; align-items:center; gap:10px; }
+.demo-pill { border:1px solid var(--line); border-radius:99px; padding:9px 12px; color:var(--muted); font-size:12px; white-space:nowrap; }
+.avatar { width:38px;height:38px;border-radius:13px;background:var(--mint);color:var(--green);display:grid;place-items:center;font-weight:800; }
+.notice { display:flex; gap:12px; align-items:flex-start; padding:13px 15px; background:light-dark(#fff8e9,#332a1d); border:1px solid light-dark(#f0dfb5,#5b4727); border-radius:13px; color:light-dark(#755421,#f2d59a); font-size:12px; margin-bottom:22px; }
+.notice b { display:block; margin-bottom:2px; }
+.grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:16px; }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:20px; min-width:0; box-shadow:0 4px 14px #10251a06; }
+.card-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:16px; }
+.card h2 { font-size:15px; margin:0; letter-spacing:-.2px; }
+.card p { color:var(--muted); }
+.stats { grid-column:span 4; min-height:138px; }
+.stat-top { display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:12px; }
+.stat-icon { width:33px;height:33px;border-radius:11px;background:var(--mint);display:grid;place-items:center;color:var(--green);font-size:16px; }
+.stat-value { font-size:29px; font-weight:760; letter-spacing:-1px; margin:14px 0 2px; }
+.stat-foot { color:var(--muted); font-size:11px; }
+.trend { color:var(--green); font-size:11px; font-weight:700; }
+.chart-card { grid-column:span 8; }
+.vitamin-card { grid-column:span 4; }
+.section-card { grid-column:span 7; }
+.ai-card { grid-column:span 5; }
+.full { grid-column:1/-1; }
+.chip { display:inline-flex; align-items:center; border:1px solid var(--line); border-radius:99px; padding:6px 10px; font-size:11px; color:var(--muted); background:var(--surface2); }
+select, input { color:var(--text); background:var(--surface2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; outline:none; width:100%; }
+select:focus, input:focus { border-color:var(--green); box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 15%,transparent); }
+.chart-wrap { width:100%; overflow:hidden; }
+.chart { display:block; width:100%; height:auto; min-height:180px; }
+.legend { display:flex; gap:15px; flex-wrap:wrap; color:var(--muted); font-size:11px; margin-top:4px; }
+.legend span::before { content:""; width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px; }
+.vit-list { display:grid; gap:8px; }
+.vit-row { display:flex; align-items:center; gap:11px; width:100%; text-align:left; padding:10px; border:1px solid var(--line); background:transparent; color:var(--text); border-radius:13px; }
+.vit-row.selected { background:var(--mint); border-color:color-mix(in srgb,var(--green) 40%,var(--line)); }
+.vit-bubble { width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:var(--surface2);font-weight:800;color:var(--green); }
+.vit-info { flex:1; min-width:0; }
+.vit-info b { display:block; font-size:13px; }
+.vit-info small { display:block;color:var(--muted);font-size:11px;margin-top:2px; }
+.vit-arrow { color:var(--muted); }
+.btn { border:0; border-radius:11px; padding:11px 15px; font-weight:750; font-size:12px; background:var(--green); color:#fff; }
+.btn.secondary { color:var(--text); background:var(--surface2); border:1px solid var(--line); }
+.btn:active { transform:translateY(1px); }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.field label { display:block; font-size:11px; color:var(--muted); margin:0 0 7px; }
+.field.full-field { grid-column:1/-1; }
+.form-actions { display:flex; gap:9px; align-items:center; margin-top:14px; flex-wrap:wrap; }
+.feedback { color:var(--green); font-size:12px; min-height:18px; margin-top:10px; }
+.ai-head { display:flex; align-items:center; gap:10px; }
+.ai-symbol { width:37px;height:37px;display:grid;place-items:center;background:var(--mint);color:var(--green);border-radius:12px;font-size:18px; }
+.ai-output { padding:14px; background:var(--surface2); border-radius:13px; font-size:13px; line-height:1.6; margin:15px 0 0; }
+.ai-output strong { color:var(--green); }
+.table-wrap { overflow:auto; }
+table { width:100%; border-collapse:collapse; font-size:12px; min-width:500px; }
+th { text-align:left; color:var(--muted); font-weight:650; font-size:10px; text-transform:uppercase; letter-spacing:1px; padding:10px 9px; border-bottom:1px solid var(--line); }
+td { padding:13px 9px; border-bottom:1px solid var(--line); }
+tbody tr:last-child td { border-bottom:0; }
+.tag { padding:4px 8px; border-radius:99px; background:var(--mint); color:var(--green); font-size:10px; font-weight:700; }
+.page { display:none; }
+.page.active { display:block; }
+.empty { text-align:center; padding:38px 15px; color:var(--muted); }
+.info-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px; }
+.info-tile { border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--surface2); }
+.info-tile .num { color:var(--green);font-size:22px;font-weight:800; }
+.info-tile b { display:block;font-size:13px;margin:6px 0; }
+.info-tile p { font-size:12px;line-height:1.55;margin:0; }
+footer { margin-top:25px; padding-top:15px; border-top:1px solid var(--line); display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:10px; }
+@media(max-width:900px) { .shell{grid-template-columns:1fr;} aside{padding:13px 16px; border-right:0;border-bottom:1px solid var(--line);gap:12px;} .brand{padding:0 2px;} nav{display:flex;overflow:auto;} .nav-label,.side-note{display:none;} .nav-btn{width:auto;white-space:nowrap;padding:9px 11px;} main{padding:22px 18px;} .stats{grid-column:span 4;} .chart-card{grid-column:span 7;} .vitamin-card{grid-column:span 5;} .section-card,.ai-card{grid-column:span 6;} }
+@media(max-width:600px) { .topbar{align-items:flex-start;} .top-actions{gap:6px;flex-direction:column;align-items:flex-end;} .demo-pill{font-size:10px;padding:7px 9px;} .stats{grid-column:span 6;} .stats:last-of-type{grid-column:1/-1;} .chart-card,.vitamin-card,.section-card,.ai-card{grid-column:1/-1;} .field-grid{grid-template-columns:1fr;} .field.full-field{grid-column:auto;} .info-grid{grid-template-columns:1fr;} footer{flex-direction:column;} h1{font-size:27px;} }
+</style>
+</head>
+<body>
+<div id="app">
+<div class="shell">
+<aside>
+  <div class="brand"><div class="logo"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c-5.3-3.2-8-6.5-8-10.1A4.8 4.8 0 0 1 12 8a4.8 4.8 0 0 1 8 2.9C20 14.5 17.3 17.8 12 21Z" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v10m-4-5h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><div><strong>VitaSphere AI</strong><small>wellness intelligence</small></div></div>
+  <div><div class="nav-label">WORKSPACE</div><nav aria-label="Основная навигация">
+    <button class="nav-btn active" data-page="overview"><span class="ico">◫</span> Обзор</button>
+    <button class="nav-btn" data-page="history"><span class="ico">◷</span> История данных</button>
+    <button class="nav-btn" data-page="add"><span class="ico">＋</span> Добавить результат</button>
+    <button class="nav-btn" data-page="devices"><span class="ico">⌁</span> Аксессуары</button>
+    <button class="nav-btn" data-page="about"><span class="ico">✳</span> О проекте</button>
+  </nav></div>
+  <div class="side-note"><div><span class="pulse"></span><strong>Демо-система активна</strong></div><p>Реальные датчики не подключены. Все стартовые значения вымышлены.</p></div>
+</aside>
+<main>
+  <div class="topbar"><div><div class="eyebrow">PERSONAL VITAMIN TRACKER</div><h1 id="pageTitle">Твоя витаминная картина</h1><p class="subtitle" id="pageSubtitle">Демонстрационная панель для исследования VitaSphere AI.</p></div><div class="top-actions"><span class="demo-pill">● DEMO MODE</span><div class="avatar" title="Демо-профиль">VS</div></div></div>
+  <div class="notice"><span>ⓘ</span><div><b>Учебный прототип — не медицинское устройство</b>Показатели придуманы для демонстрации интерфейса. Они не отражают состояние здоровья и не предназначены для диагностики или выбора лечения.</div></div>
+
+  <section class="page active" id="page-overview">
+    <div class="grid">
+      <article class="card stats"><div class="stat-top"><span>Витамины в демо-профиле</span><span class="stat-icon">✳</span></div><div class="stat-value" id="statCount">4</div><div class="stat-foot">Маркеры в демонстрационном списке</div></article>
+      <article class="card stats"><div class="stat-top"><span>Записи в истории</span><span class="stat-icon">▤</span></div><div class="stat-value" id="statRecords">8</div><div class="stat-foot">Тестовые записи, не реальные анализы</div></article>
+      <article class="card stats"><div class="stat-top"><span>Проверка данных</span><span class="stat-icon">✓</span></div><div class="stat-value" style="font-size:24px">Активна</div><div class="stat-foot"><span class="trend">●</span> Проверяются формат и единицы</div></article>
+      <article class="card chart-card"><div class="card-head"><div><h2>История выбранного витамина</h2><p style="font-size:12px;margin:5px 0 0">Пример изменения значений по датам</p></div><select id="chartVitamin" aria-label="Витамин для графика" style="width:112px"><option value="D">Витамин D</option><option value="B12">Витамин B12</option><option value="C">Витамин C</option><option value="B9">Витамин B9</option></select></div><div class="chart-wrap"><svg class="chart" id="chart" viewBox="0 0 600 230" role="img" aria-label="Демонстрационный график"></svg></div><div class="legend"><span>Демо-значения</span><span style="color:var(--muted)">Не медицинская оценка</span></div></article>
+      <article class="card vitamin-card"><div class="card-head"><h2>Выбери витамин</h2><span class="chip">4 маркера</span></div><div class="vit-list" id="vitList"></div><button class="btn secondary" id="showAddVitamin" style="width:100%;margin-top:12px">＋ Добавить витамин</button></article>
+      <article class="card section-card"><div class="card-head"><div><h2>Добавить демонстрационный результат</h2><p style="font-size:12px;margin:5px 0 0">Запись попадёт в историю и на график</p></div><span class="chip">TEST DATA</span></div><form id="resultForm"><div class="field-grid"><div class="field"><label for="vitInput">Витамин</label><select id="vitInput"><option value="D">Витамин D</option><option value="B12">Витамин B12</option><option value="C">Витамин C</option><option value="B9">Витамин B9</option></select></div><div class="field"><label for="valueInput">Демонстрационное значение</label><input id="valueInput" type="number" step="any" min="0" placeholder="Например, 32" required></div><div class="field"><label for="unitInput">Единица измерения</label><select id="unitInput"><option value="ng/mL">ng/mL</option><option value="pg/mL">pg/mL</option><option value="mg/L">mg/L</option></select></div><div class="field"><label for="dateInput">Дата записи</label><input id="dateInput" type="date" required></div></div><div class="form-actions"><button class="btn" type="submit">＋ Сохранить в демо-историю</button><button class="btn secondary" type="button" id="fillExample">Подставить пример</button></div><div class="feedback" id="formFeedback" aria-live="polite"></div></form></article>
+      <article class="card ai-card"><div class="card-head"><div class="ai-head"><div class="ai-symbol">✳</div><div><h2>VitaSphere AI</h2><p style="font-size:11px;margin:4px 0 0">Демонстрационный анализ</p></div></div><span class="chip">BETA</span></div><div class="ai-output" id="aiOutput">Выбери витамин, чтобы увидеть краткое объяснение данных.</div><p style="font-size:11px;line-height:1.5;margin:12px 0 0">Система не ставит диагнозов. В будущей версии медицинские интерпретации должны опираться на проверенные источники и рекомендации специалистов.</p></article>
+      <article class="card full"><div class="card-head"><div><h2>Последние записи</h2><p style="font-size:12px;margin:5px 0 0">Только синтетические данные</p></div><button class="btn secondary" id="openHistory">Вся история →</button></div><div class="table-wrap"><table><thead><tr><th>Дата</th><th>Витамин</th><th>Значение</th><th>Единица</th><th>Источник</th></tr></thead><tbody id="recentTable"></tbody></table></div></article>
+    </div>
+  </section>
+
+  <section class="page" id="page-history"><div class="grid"><article class="card full"><div class="card-head"><div><h2>История данных</h2><p style="font-size:12px;margin:5px 0 0">Все записи, добавленные в этой демонстрационной сессии</p></div><button class="btn secondary" id="historyAdd">＋ Новая запись</button></div><div class="table-wrap"><table><thead><tr><th>Дата</th><th>Витамин</th><th>Значение</th><th>Единица</th><th>Источник</th></tr></thead><tbody id="historyTable"></tbody></table></div><div class="form-actions"><button class="btn secondary" id="resetData">Сбросить демо-данные</button><span class="subtitle" style="font-size:11px">Записи не отправляются на сервер и не сохраняются после перезагрузки.</span></div></article></div></section>
+
+  <section class="page" id="page-add"><div class="grid"><article class="card section-card"><div class="card-head"><h2>Новая демонстрационная запись</h2><span class="chip">LOCAL DEMO</span></div><p style="font-size:13px">Заполни поля тестовыми числами. Сайт проверит, что значение не отрицательное и дата указана.</p><div id="addFormMount"></div></article><article class="card ai-card"><div class="ai-head"><div class="ai-symbol">✓</div><div><h2>Что проверяет прототип?</h2><p style="font-size:12px;margin:4px 0 0">Проверки качества данных</p></div></div><div class="ai-output"><b>01.</b> Пустые поля и неверный формат<br><br><b>02.</b> Отрицательные значения<br><br><b>03.</b> Подпись единиц измерения<br><br><b>04.</b> Наличие даты записи</div></article></div></section>
+
+  <section class="page" id="page-devices"><div class="grid"><article class="card full"><div class="card-head"><div><h2>Экосистема аксессуаров</h2><p style="font-size:12px;margin:5px 0 0">Концепция будущих устройств</p></div><span class="chip">НЕ ПОДКЛЮЧЕНО</span></div><div class="info-grid"><div class="info-tile"><div class="num">01</div><b>Умный пластырь</b><p>Идея сменного модуля с сенсором. Сейчас это только концепция: измерений нет.</p><div style="margin-top:12px"><span class="chip">Макет в будущем</span></div></div><div class="info-tile"><div class="num">02</div><b>Кольцо или браслет</b><p>Возможный аксессуар для передачи данных в приложение, если совместимый сенсор будет разработан и проверен.</p><div style="margin-top:12px"><span class="chip">Не подключено</span></div></div><div class="info-tile"><div class="num">03</div><b>Единое приложение</b><p>Одна панель для истории лабораторных результатов и совместимых устройств с понятным указанием источника данных.</p><div style="margin-top:12px"><span class="tag">Прототип интерфейса</span></div></div></div></article><article class="card full"><h2>Важное научное ограничение</h2><p style="font-size:13px;line-height:1.7">Разные витамины требуют разных методов измерения. Выбор витамина в приложении сам по себе не позволяет сенсору измерить его уровень. Для реального медицинского применения каждый метод нужно отдельно исследовать и валидировать.</p></article></div></section>
+
+  <section class="page" id="page-about"><div class="grid"><article class="card full"><div class="eyebrow">THE PROJECT</div><h2 style="font-size:24px;margin:8px 0">VitaSphere AI</h2><p style="max-width:780px;line-height:1.8">Учебный проект универсальной платформы для ведения истории витаминных показателей. Идея объединяет понятный интерфейс, контроль качества данных, графики и перспективу работы с разными специализированными биосенсорами.</p><div class="info-grid" style="margin-top:20px"><div class="info-tile"><div class="num">01</div><b>Собрать</b><p>Результаты лабораторных исследований и даты в единой истории.</p></div><div class="info-tile"><div class="num">02</div><b>Проверить</b><p>Помочь заметить ошибки ввода, единиц и пропущенные поля.</p></div><div class="info-tile"><div class="num">03</div><b>Изучить</b><p>Исследовать, как в будущем подключать научно подтверждённые сенсоры.</p></div></div></article><article class="card full"><h2>План первого этапа</h2><div class="ai-output"><b>Этап 1.</b> Интерфейс и навигация — создано в прототипе.<br><b>Этап 2.</b> Проверки полей и история записей — демонстрационная версия.<br><b>Этап 3.</b> Проверка на наборе из 100 синтетических записей.<br><b>Этап 4.</b> Описание ограничений, исследовательская часть и презентация.</div></article></div></section>
+  <footer><span>VitaSphere AI · School research prototype</span><span>Demo data only · No medical sensor connected</span></footer>
+</main>
+</div>
+</div>
+<script>
+const vitaminInfo = {
+ D:{name:'Витамин D',short:'D',method:'25(OH)D · обычно лабораторный анализ',unit:'ng/mL',desc:'Для реальной оценки витамина D часто используют анализ 25-гидроксивитамина D (25(OH)D). Этот экран показывает только вымышленные значения.'},
+ B12:{name:'Витамин B12',short:'B12',method:'B12 · лабораторные результаты',unit:'pg/mL',desc:'Витамин B12 оценивают с помощью лабораторных исследований; интерпретация зависит от контекста и рекомендаций врача. Здесь приведены только вымышленные значения.'},
+ C:{name:'Витамин C',short:'C',method:'Питание + результаты исследований',unit:'mg/L',desc:'Витамин C можно изучать через рацион и соответствующие лабораторные данные. Этот демо-экран не измеряет его уровень.'},
+ B9:{name:'Витамин B9',short:'B9',method:'Фолат · лабораторные результаты',unit:'ng/mL',desc:'Для фолата используют лабораторные исследования. Приложение может хранить результат и дату, но не определяет статус витамина самостоятельно.'}
+};
+const initialRecords = [
+ {date:'2026-09-14',vit:'D',value:28,unit:'ng/mL',source:'Синтетический пример'},
+ {date:'2026-09-20',vit:'D',value:31,unit:'ng/mL',source:'Синтетический пример'},
+ {date:'2026-09-28',vit:'D',value:29,unit:'ng/mL',source:'Синтетический пример'},
+ {date:'2026-10-02',vit:'B12',value:410,unit:'pg/mL',source:'Синтетический пример'},
+ {date:'2026-10-06',vit:'B12',value:425,unit:'pg/mL',source:'Синтетический пример'},
+ {date:'2026-09-18',vit:'C',value:8.2,unit:'mg/L',source:'Синтетический пример'},
+ {date:'2026-10-01',vit:'C',value:7.8,unit:'mg/L',source:'Синтетический пример'},
+ {date:'2026-10-05',vit:'B9',value:6.4,unit:'ng/mL',source:'Синтетический пример'}
+];
+let records = initialRecords.map(x=>({...x}));
+let selectedVitamin='D';
+const $=id=>document.getElementById(id);
+const today = new Date(); $('dateInput').value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+function fmtDate(s){ if(!s)return '—'; const [y,m,d]=s.split('-'); return `${d}.${m}.${y}`; }
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function renderVitaminList(){
+ $('vitList').innerHTML=Object.keys(vitaminInfo).map(k=>`<button class="vit-row ${k===selectedVitamin?'selected':''}" data-vit="${k}"><span class="vit-bubble">${k}</span><span class="vit-info"><b>${vitaminInfo[k].name}</b><small>${vitaminInfo[k].method}</small></span><span class="vit-arrow">›</span></button>`).join('');
+ document.querySelectorAll('[data-vit]').forEach(b=>b.addEventListener('click',()=>selectVitamin(b.dataset.vit)));
+}
+function selectVitamin(v){selectedVitamin=v;$('chartVitamin').value=v;$('vitInput').value=v;renderVitaminList();renderChart();renderAI();}
+function renderChart(){
+ const rows=records.filter(r=>r.vit===$('chartVitamin').value).sort((a,b)=>a.date.localeCompare(b.date));
+ const svg=$('chart'); const W=600,H=230,L=46,R=15,T=20,B=38,plotW=W-L-R,plotH=H-T-B;
+ if(!rows.length){svg.innerHTML=`<text x="300" y="110" fill="var(--muted)" text-anchor="middle" font-size="13">Пока нет записей для этого витамина</text>`;return;}
+ const vals=rows.map(r=>Number(r.value));let min=Math.min(...vals),max=Math.max(...vals);if(min===max){min-=1;max+=1;}const pad=(max-min)*.18;min=Math.max(0,min-pad);max=max+pad;
+ const x=i=>L+(rows.length===1?plotW/2:i*plotW/(rows.length-1)); const y=v=>T+(max-v)/(max-min)*plotH;
+ let s='';for(let i=0;i<5;i++){const yy=T+i*plotH/4;const label=(max-i*(max-min)/4).toLocaleString('ru-RU',{maximumFractionDigits:1});s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--line)" stroke-dasharray="3 5"/><text x="${L-9}" y="${yy+4}" text-anchor="end" font-size="10" fill="var(--muted)">${label}</text>`;}
+ const pts=rows.map((r,i)=>`${x(i)},${y(Number(r.value))}`).join(' ');const area=`${L},${T+plotH} ${pts} ${x(rows.length-1)},${T+plotH}`;
+ s+=`<polygon points="${area}" fill="var(--green)" opacity=".10"/><polyline points="${pts}" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+ rows.forEach((r,i)=>{s+=`<circle cx="${x(i)}" cy="${y(Number(r.value))}" r="4.5" fill="var(--surface)" stroke="var(--green)" stroke-width="2.5"/><text x="${x(i)}" y="${H-14}" text-anchor="middle" font-size="10" fill="var(--muted)">${r.date.slice(5).replace('-','.')}</text>`;});svg.innerHTML=s;
+}
+function renderAI(){const v=$('chartVitamin').value;const rows=records.filter(r=>r.vit===v).sort((a,b)=>a.date.localeCompare(b.date));let msg=`<strong>${vitaminInfo[v].name}:</strong> ${vitaminInfo[v].desc}`;if(rows.length>1){const first=Number(rows[0].value),last=Number(rows[rows.length-1].value);const diff=last-first;msg+=`<br><br>В тестовой истории ${rows.length} записи. Между первой и последней записью значение ${diff===0?'не изменилось':diff>0?'увеличилось':'уменьшилось'} на ${Math.abs(diff).toLocaleString('ru-RU',{maximumFractionDigits:2})} ${esc(rows[rows.length-1].unit)}.`;}else{msg+='<br><br>Добавь ещё одну запись, чтобы сравнить значения во времени.';}msg+='<br><br><span style="color:var(--muted)">Это математическое описание демонстрационных чисел, не медицинское заключение.</span>';$('aiOutput').innerHTML=msg;}
+function rowsHTML(rows){if(!rows.length)return '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:25px">Записей пока нет</td></tr>';return [...rows].sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<tr><td>${fmtDate(r.date)}</td><td><b>${vitaminInfo[r.vit]?.name||esc(r.vit)}</b></td><td>${esc(r.value)}</td><td>${esc(r.unit)}</td><td><span class="tag">${esc(r.source)}</span></td></tr>`).join('');}
+function renderTables(){$('recentTable').innerHTML=rowsHTML(records.slice(-5));$('historyTable').innerHTML=rowsHTML(records);$('statRecords').textContent=records.length;$('statCount').textContent=Object.keys(vitaminInfo).length;}
+function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$('page-'+page).classList.add('active');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));const titles={overview:['Твоя витаминная картина','Демонстрационная панель для исследования VitaSphere AI.'],history:['История данных','Просматривай и проверяй тестовые записи.'],add:['Добавить результат','Введи искусственные данные и проверь валидацию.'],devices:['Аксессуары VitaSphere','Концепция будущей экосистемы устройств.'],about:['О проекте VitaSphere AI','Цель, возможности и ограничения учебного прототипа.']};$('pageTitle').textContent=titles[page][0];$('pageSubtitle').textContent=titles[page][1];}
+document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+$('chartVitamin').addEventListener('change',e=>{selectedVitamin=e.target.value;$('vitInput').value=selectedVitamin;renderVitaminList();renderChart();renderAI();});
+$('resultForm').addEventListener('submit',e=>{e.preventDefault();const vit=$('vitInput').value,value=Number($('valueInput').value),unit=$('unitInput').value,date=$('dateInput').value;const fb=$('formFeedback');if(!Number.isFinite(value)||value<0){fb.textContent='Ошибка: введи число не меньше нуля.';fb.style.color='var(--coral)';return;}if(!date){fb.textContent='Укажи дату записи.';fb.style.color='var(--coral)';return;}records.push({date,vit,value,unit,source:'Добавлено вручную · демо'});selectedVitamin=vit;$('chartVitamin').value=vit;renderAll();fb.textContent='Готово! Демонстрационная запись добавлена в историю.';fb.style.color='var(--green)';$('valueInput').value='';});
+$('fillExample').addEventListener('click',()=>{$('vitInput').value='D';$('valueInput').value='32';$('unitInput').value='ng/mL';$('dateInput').value=new Date().toISOString().slice(0,10);$('formFeedback').textContent='Пример подставлен. Это вымышленные данные.';$('formFeedback').style.color='var(--muted)';});
+$('showAddVitamin').addEventListener('click',()=>{const name=prompt('Добавить новый маркер (например, E или A). Это только раздел для демо, сенсор не появится автоматически:');if(!name)return;const key=name.trim().toUpperCase();if(!/^[A-Z0-9]{1,5}$/.test(key)){alert('Используй короткое обозначение латинскими буквами, например E или A.');return;}if(vitaminInfo[key]){selectVitamin(key);return;}vitaminInfo[key]={name:'Витамин '+key,short:key,method:'Метод измерения нужно отдельно изучить',unit:'единица не выбрана',desc:'Для этого маркера пока не настроен проверенный метод измерения. Раздел добавлен только для демонстрации расширяемости интерфейса.'};const opt=document.createElement('option');opt.value=key;opt.textContent=vitaminInfo[key].name;$('chartVitamin').appendChild(opt);const opt2=opt.cloneNode(true);$('vitInput').appendChild(opt2);$('unitInput').value='ng/mL';renderAll();selectVitamin(key);});
+$('openHistory').addEventListener('click',()=>showPage('history'));$('historyAdd').addEventListener('click',()=>showPage('add'));$('resetData').addEventListener('click',()=>{records=initialRecords.map(x=>({...x}));selectedVitamin='D';$('chartVitamin').value='D';renderAll();});
+function renderAll(){renderVitaminList();renderChart();renderAI();renderTables();}
+renderAll();
+</script>
+</body>
+</html>
